@@ -2,7 +2,7 @@
   <div id="results">
 
 
-    <menu class="menu">
+    <menu class="menu" @click="clickItems($event)">
 
       <button class="menu__item active" style="--bgColorItem: #0075ea;" @click="download">
         <svg class="icon" viewBox="0 0 24 24">
@@ -12,7 +12,7 @@
         </svg>
       </button>
 
-      <button class="menu__item" style="--bgColorItem: #f54888;">
+      <button class="menu__item" style="--bgColorItem: #f58a48;">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M6.7,4.8h10.7c0.3,0,0.6,0.2,0.7,0.5l2.8,7.3c0,0.1,0,0.2,0,0.3v5.6c0,0.4-0.4,0.8-0.8,0.8H3.8
         C3.4,19.3,3,19,3,18.5v-5.6c0-0.1,0-0.2,0.1-0.3L6,5.3C6.1,5,6.4,4.8,6.7,4.8z"/>
@@ -26,7 +26,6 @@
 
     <section>
       {{ places }}
-      {{ searchTitle }}
     </section>
 
 
@@ -41,7 +40,9 @@ export default defineComponent({
   data () {
     return {
       searchTitle: document.querySelector('#searchboxinput')?.value | undefined,
-      places: [1, 2, 3]
+      places: null,
+      activeItem: document.querySelector('.active'),
+      searchResults: null
     }
   },
   setup () {
@@ -53,55 +54,57 @@ export default defineComponent({
     },
     menu () {
       console.log('menu')
+    },
+
+    checkPlaces () {
+      const element = document.querySelector('[aria-label~=Results]')
+
+      //run function every second stop after 10 seconds
+      let scrollInterval = setInterval(() => {
+        element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+        console.log('scroll height', element.scrollHeight)
+      }, 500)
+
+      setTimeout(() => {
+        clearInterval(scrollInterval)
+
+        this.places =  [this.places, ...document.querySelectorAll('.fontHeadlineSmall')]
+        document.querySelector('.punXpd>button+button').click()
+        this.checkPlaces()
+      }, 6000)
+    },
+    clickItems (event) {
+
+      this.activeItem = event.target
+
+      //loop through all menu items
+      const menuItems = document.querySelectorAll('.menu__item')
+
+      //remove active class for all menu items
+      menuItems.forEach((item) => {
+        // remove active class on all menu items
+        item.classList.remove('active')
+
+        // add active class on the clicked menu item
+        if (item === event.target.closest('.menu__item')) {
+          item.classList.add('active')
+        }
+      })
+
+
+
+
+      // document.querySelector('#results').style.backgroundColor = bgColorsBody[index]
     }
   },
   mounted () {
-    console.log('mounted')
+    console.log('mounted');
 
-    const body = document.body
-    const bgColorsBody = ['#ffb457', '#ff96bd', '#9999fb', '#ffe797', '#cffff1']
-    const menu = body.querySelector('.menu')
-    const menuItems = menu.querySelectorAll('.menu__item')
-    // const menuBorder = menu.querySelector('.menu__border')
-    let activeItem = menu.querySelector('.active')
+    this.checkPlaces()
 
-    function clickItem (item, index) {
-      menu.style.removeProperty('--timeOut')
 
-      if (activeItem === item) return
 
-      if (activeItem) {
-        activeItem.classList.remove('active')
-      }
-
-      item.classList.add('active')
-      body.style.backgroundColor = bgColorsBody[index]
-      activeItem = item
-      offsetMenuBorder(activeItem, menuBorder)
-
-    }
-
-    function offsetMenuBorder (element, menuBorder) {
-
-      const offsetActiveItem = element.getBoundingClientRect()
-      const left = Math.floor(
-          offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth - offsetActiveItem.width) / 2) + 'px'
-      menuBorder.style.transform = `translate3d(${left}, 0 , 0)`
-
-    }
-
-    offsetMenuBorder(activeItem, menuBorder)
-
-    menuItems.forEach((item, index) => {
-
-      item.addEventListener('click', () => clickItem(item, index))
-
-    })
-
-    window.addEventListener('resize', () => {
-      offsetMenuBorder(activeItem, menuBorder)
-      menu.style.setProperty('--timeOut', 'none')
-    })
+    console.log(this.places);
 
   }
 })
@@ -142,8 +145,9 @@ html *::after {
 }
 
 #results > section {
+  overflow: auto;
   height: 100vh;
-  background:#ffffffcf;
+  background: #ffffffcf;
 }
 
 .menu {
@@ -189,12 +193,12 @@ html *::after {
 
 
 .menu__item.active {
-  transform: translate3d(0, -32px, 0);
-  height: 10px;
-  width: 60px;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  top: 28px;
+  /*transform: translate3d(0, -32px, 0);*/
+  /*height: 10px;*/
+  /*width: 60px;*/
+  /*border-top-left-radius: 30px;*/
+  /*border-top-right-radius: 30px;*/
+  /*top: 28px;*/
 }
 
 .menu__item.active::before {
