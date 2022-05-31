@@ -1,5 +1,7 @@
 console.log("hello background")
 
-//watch page
-console.log("watching page")
-console.log("watching pag asdf asdfasdfe")
+console.log('location:', location)
+console.log('location.href:', location.href)
+
+
+// chrome.browserAction

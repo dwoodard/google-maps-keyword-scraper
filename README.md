@@ -7,7 +7,6 @@ Support
 - [x] Vue3
 - [x] Typescript
 - [x] Hot Reload
-- [x] Firebase Authentication
 
 
 # Quick Start 
