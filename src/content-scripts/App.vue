@@ -25,7 +25,13 @@
 
 
     <section>
-      {{ places }}
+
+      <div v-for="(place,i) in places">
+
+        {{ place }}
+
+      </div>
+
     </section>
 
 
@@ -68,7 +74,7 @@ export default defineComponent({
       setTimeout(() => {
         clearInterval(scrollInterval)
 
-        this.places =  [this.places, ...document.querySelectorAll('.fontHeadlineSmall')]
+        this.places =  [this.places, [...document.querySelectorAll('.fontHeadlineSmall')].map(el => el.innerText)]
         document.querySelector('.punXpd>button+button').click()
         this.checkPlaces()
       }, 6000)
